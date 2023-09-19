@@ -8,7 +8,7 @@
 
 int main()
 {
-	lfu_simple lfu {};  
+	lfu_simple lfu   {4};  
 
 	lfu.get_data(100, 0);
 	lfu.print_vec(     );

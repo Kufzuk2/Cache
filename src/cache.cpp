@@ -5,6 +5,11 @@
 #include <utility>
 #include <string>
 
+lfu_simple::lfu_simple(size_t capacity)
+{
+	this->capacity = capacity;	// may be pointless
+	cache_data.reserve   (capacity);
+}
 
 
 int lfu_simple::get_data(int key, int page)
@@ -14,9 +19,7 @@ int lfu_simple::get_data(int key, int page)
 
 	if (size == 0)
 	{
-		cache_data.reserve(cache_capacity);
 		cache_data.push_back(new_elem    );
-
 		return 0;
 	}
 	
