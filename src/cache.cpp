@@ -5,9 +5,9 @@
 #include <utility>
 #include <string>
 
-lfu_simple::lfu_simple(size_t capacity)
+lfu_simple::lfu_simple(size_t capacity) :
+capacity_{capacity}
 {
-	this->capacity = capacity;	// may be pointless
 	cache_data.reserve   (capacity);
 }
 
@@ -24,80 +24,59 @@ int lfu_simple::get_data(int key, int page)
 	}
 	
 
-	int hit = check_hit(key); //// 
+	auto hit = check_hit(key);  
 	
 	
-	if (hit != -1)                     // to be simplified
+	if (hit != cache_data.cend())             
 	{
-		cache_data[hit].counter++;
-		return 0; 
+		cache_data[hit - cache_data.cbegin()].counter_++;
 	}
 
-	if (size < 4)
+	else if (size < 4)
 	{
 		cache_data.push_back(new_elem);
-		return 0;
-	}	
-
+	}
 	
-	int least_index = search_min_freq();  // returns index of the least frequent value
+	else
+	{
+		auto least_it = std::min_element(cache_data.cbegin(),
+		cache_data.cend(),
+		[] (auto&& p1, auto p2)
+		{return p1.counter_ < p2.counter_;});
 
-	cache_data[least_index] = new_elem;
+
+		cache_data[least_it - cache_data.cbegin()] = new_elem;
+	}
+
 	return 0;
 }
 
 
-int lfu_simple::check_hit(int key) const
+
+
+lfu_simple::const_iterator lfu_simple::check_hit(int key) const
 {
-	size_t size = cache_data.size();
-
-	
-    for (size_t i = 0; i < size; i++)
-	{
-		if (cache_data[i].key == key)
-		{
-			return i;
-		}
-	}
-	return -1;
-}
-
-
-int lfu_simple::search_min_freq() const
-{
-	int    least_freq =               inf;
-	int         index =                 0;	
-	int          size = cache_data.size();  //special field in the class
-	
-
-	for (int i = 0; i < size; i++)
-	{
-
-		if (cache_data[i].counter < least_freq)
-		{
-			index      =                 i;
-			least_freq = cache_data[i].key;
-		}
-
-	}
-
-	return index;
+	return	std::find_if(cache_data.cbegin(), 
+	cache_data.cend(), 
+	[key] (auto&& val){return val.key_ == key;});
 }
 
 
 
-int lfu_simple::print_vec() const
+int lfu_simple::print() const
 {
-	int size = cache_data.size();
 	std::cout << "start print \n";
-
-	for (int i = 0; i < size; i++)
-	{
-		std::cout << cache_data[i].key << " " << cache_data[i].page << " " << cache_data[i].counter << "\n";
-	}
 	
-	std::cout << "\n";
+	for (page i: cache_data)
+	{
+		std::cout << i.key_ << " " << i.page_ 
+		   << " " << i.counter_ << "\n";
+	}
+
+
+	std::cout << std::endl;
 
 	return 0;
 }
+
 

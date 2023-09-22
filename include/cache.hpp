@@ -1,44 +1,25 @@
 #pragma once
 
-#include <iostream>
 #include <vector>
-#include <utility>
-#include <string>
+#include <algorithm>
 
-#if(1)
-enum temporal 
-{
-	//cache_capacity =     4,
-	inf            = 10000
-
-};
-#endif
-
-
-
-//template <key_t, page_t>
 class lfu_simple final
 {
-
-	private: // may be deleted
-
-	size_t capacity;
+	size_t capacity_;
 
 	struct page
 	{
-		int     key;
-		int    page;
-		int counter;
+		int     key_;
+		int    page_;
+		int counter_;
 	};	
 	
-	std::vector <struct page> cache_data;
+	using iterator       = std::vector<page>::iterator;
+	using const_iterator = std::vector<page>::const_iterator;
+	std::vector <page>     cache_data;
 
 
-
-	int search_min_freq()  const;
-
-	int check_hit(int key) const; // returns 1, if hit found
-
+	const_iterator check_hit(int key)   const; 
 
 
 	public:
@@ -47,7 +28,7 @@ class lfu_simple final
 	
 	int get_data(int key, int page);
 	
-	int print_vec()           const;
+	int print()               const;
 };
 
 

@@ -11,28 +11,28 @@ int main()
 	lfu_simple lfu   {4};  
 
 	lfu.get_data(100, 0);
-	lfu.print_vec(     );
+	lfu.print(         );
 
 	lfu.get_data(101, 1);
-	lfu.print_vec(     );
+	lfu.print(         );
 
 	lfu.get_data(102, 2);
-	lfu.print_vec(     );
+	lfu.print(     	   );
 
 	lfu.get_data(102, 2);
-	lfu.print_vec(     );
+	lfu.print(         );
 
 	lfu.get_data(103, 3);
-	lfu.print_vec(     );
+	lfu.print(         );
 
 	lfu.get_data(104, 4);
-	lfu.print_vec(     );
+	lfu.print(         );
 
 	lfu.get_data(100, 0);
-	lfu.print_vec(     );
+	lfu.print(         );
 
 	lfu.get_data(101, 1);
-	lfu.print_vec(     );
+	lfu.print(         );
 
-//	std::cout << x << "\n";
+	return 0;
 }
