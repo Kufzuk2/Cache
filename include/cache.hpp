@@ -1,35 +1,39 @@
 #pragma once
 
 #include <vector>
-#include <algorithm>
 
+
+namespace cache
+{
+
+//template <typename key_T, typename page_T>
 class lfu_simple final
 {
 	size_t capacity_;
 
-	struct page
+	struct cell
 	{
 		int     key_;
 		int    page_;
-		int counter_;
+		int counter_ = 1; 
 	};	
 	
-	using iterator       = std::vector<page>::iterator;
-	using const_iterator = std::vector<page>::const_iterator;
-	std::vector <page>     cache_data;
+	using iterator       = typename std::vector<cell>::iterator;
+	using const_iterator = typename std::vector<cell>::const_iterator;
+	std::vector <cell>     cache_data;
 
 
-	const_iterator check_hit(int key)   const; 
+	iterator check_hit(int key) ; 
 
 
 	public:
 	
 	lfu_simple(size_t     capacity);
 	
-	int get_data(int key, int page);
+	int get_data(int key, int page); // (int key)
 	
-	int print()               const;
+	void print()              const; 
 };
 
 
-
+} // namespace cache

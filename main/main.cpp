@@ -1,14 +1,12 @@
-#include "cache.hpp" 
+#include "cache.hpp"
 
-#include <iostream>
-#include <vector>
-#include <utility>
-#include <string>
-
-
+/*
+ * 1) Put all your classes in a namespace;
+ * 2) Use templates: template<typename Key_T, typename Page_T> class LFU;:
+ */
 int main()
 {
-	lfu_simple lfu   {4};  
+	cache::lfu_simple lfu {4};  
 
 	lfu.get_data(100, 0);
 	lfu.print(         );
