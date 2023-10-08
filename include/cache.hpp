@@ -63,7 +63,7 @@ class lfu_simple final
     {
 	    std::cout << "start print \n";
 	
-    	for (const cell& i: cache_data) //  error if cell& 
+    	for (const cell& i: cache_data)  
 	    {
 		    std::cout << i.key_ << " "        << i.page_ 
 		              << " "    << i.counter_ <<   "\n";
@@ -74,11 +74,11 @@ class lfu_simple final
 ///--------------------------------------------------------------------------------
 
 	
-	int get_data( key_T key, page_T page ) // (int key)
-	
+	page_T get_key( key_T key )	
     {
-	    size_t size          = cache_data.size();
-    	struct cell new_elem =    {key, page, 1};
+        page_T page = get_page(key);
+	    size_t size          =       cache_data.size();
+    	struct cell new_elem = {key,page};
 
 	    if (size == 0)
     	{
@@ -109,12 +109,10 @@ class lfu_simple final
             *least_it = std::move(new_elem);
     	}   
 
-	    return 0;
+	    return page;
     }
 
 }; // class
 
-
-// get_data should return a page
 
 } // namespace cache
