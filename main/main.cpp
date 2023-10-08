@@ -6,7 +6,7 @@
  */
 int main()
 {
-	cache::lfu_simple lfu {4};  
+	cache::lfu_simple <int, int> lfu {4};  
 
 	lfu.get_data(100, 0);
 	lfu.print(         );

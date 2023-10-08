@@ -1,3 +1,7 @@
+#if 0  // check if works without
+
+
+
 #include "cache.hpp"
 
 #include <iostream>
@@ -5,15 +9,20 @@
 #include <utility>
 #include <string>
 #include <algorithm>
+#include <cstddef>
 
-cache::lfu_simple::lfu_simple(size_t capacity) :
+
+#if 0
+cache::lfu_simple::lfu_simple (std::size_t capacity) :
 capacity_{capacity}
 {
 	cache_data.reserve (capacity);
 }
+#endif
+namespace cache {
 
-
-int cache::lfu_simple::get_data(int key, int page) // get_data should return a page
+template <typename key_T, typename page_T>
+int lfu_simple<key_T, page_T>::get_data( key_T key, page_T page) // get_data should return a page
 {
 	size_t size          = cache_data.size();
 	struct cell new_elem =    {key, page, 1};
@@ -55,10 +64,10 @@ int cache::lfu_simple::get_data(int key, int page) // get_data should return a p
 
 
 
-cache::lfu_simple::iterator cache::lfu_simple::check_hit(int key)
+cache::lfu_simple::iterator cache::lfu_simple::check_hit( key_T key )   
 {
 	return std::find_if(cache_data.begin(), cache_data.end(),
-                        [key](const cell& val){ return val.key_ == key; });
+                        [key]( const cell& val ){ return val.key_ == key; });
 }
 
 
@@ -78,4 +87,7 @@ void cache::lfu_simple::print() const
 
 }
 
+}
 
+
+#endif  
