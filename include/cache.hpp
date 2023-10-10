@@ -4,7 +4,6 @@
 #include <iostream>
 #include <vector>
 #include <utility>
-#include <string>
 #include <algorithm>
 #include <cstddef>
 
@@ -25,13 +24,13 @@ class lfu_simple final
 	
 	using iterator       = typename std::vector<cell>::iterator;
 	using const_iterator = typename std::vector<cell>::const_iterator;
-	std::vector <cell>     cache_data;
+	std::vector <cell>     cache_data_;
 
 ///---------------------------------------------------------------------------------
 
-	iterator check_hit(key_T key)
+	iterator check_hit(const key_T& key)
     {   
-	    return std::find_if(cache_data.begin(), cache_data.end(),
+	    return std::find_if(cache_data_.begin(), cache_data_.end(),
                            [key]( const cell& val ){ return val.key_ == key; });
     }
 
@@ -39,7 +38,7 @@ class lfu_simple final
 ///---------------------------------------------------------------------------------
 
     
-    page_T get_page(key_T key)
+    page_T get_page(const key_T& key)
     {
         return key;
     }
@@ -48,10 +47,10 @@ class lfu_simple final
 
     public:
 
-    lfu_simple (std::size_t capacity) :
+    explicit lfu_simple (std::size_t capacity) :
     capacity_{capacity}
     {
-	    cache_data.reserve (capacity);
+	    cache_data_.reserve (capacity);
     }
 
 
@@ -63,49 +62,43 @@ class lfu_simple final
     {
 	    std::cout << "start print \n";
 	
-    	for (const cell& i: cache_data)  
+    	for (const cell& i: cache_data_)  
 	    {
-		    std::cout << i.key_ << " "        << i.page_ 
-		              << " "    << i.counter_ <<   "\n";
-	}
+		    std::cout << i.key_ << ' '        << i.page_ 
+		              << ' '    << i.counter_ <<   '\n';
+	    }
         std::cout << std::endl;
     }
 
 ///--------------------------------------------------------------------------------
 
 	
-	page_T get_key( key_T key )	
+	page_T get_key(const key_T& key)
     {
-        page_T page = get_page(key);
-	    size_t size          =       cache_data.size();
-    	struct cell new_elem = {key,page};
-
-	    if (size == 0)
-    	{
-	    	cache_data.push_back(new_elem);
-		    return 0;
-    	}
-	
-
-	    auto hit = check_hit(key);  
-	
-	
-    	if (hit != cache_data.end())             
+        page_T page =   get_page(key);
+        auto   hit  =  check_hit(key);  
+       
+        if (hit != cache_data_.end())             
 	    {
 		    hit->counter_++; 
+            return page;
     	}
 
+	    size_t size   = cache_data_.size();
+        cell new_elem =         {key,page};
 
-        else if (size < capacity_) 
+
+        if (size < capacity_) 
     	{   
-	    	cache_data.push_back(std::move(new_elem));
+	    	cache_data_.push_back(std::move(new_elem));
     	}
 
 	    
         else
     	{
-    		auto least_it = std::min_element(cache_data.begin(), cache_data.end(),
-	    	                                 [](cell& p1, cell& p2){ return p1.counter_ < p2.counter_; });
+    		auto least_it = std::min_element(cache_data_.begin(), cache_data_.end(),
+	    	                                 [](const cell& p1, const cell& p2)
+                                             { return p1.counter_ < p2.counter_; });
             *least_it = std::move(new_elem);
     	}   
 

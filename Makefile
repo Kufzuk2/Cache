@@ -1,3 +1,3 @@
 all:
-	g++ -Wall -Wextra src/cache.cpp main/main.cpp -I./include -o build/cache
+	g++ -Wall -Wextra main/main.cpp -I./include -o build/cache
 
