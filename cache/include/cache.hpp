@@ -63,32 +63,34 @@ class cache
 
         if(key_in_cache.first)
         {
-            key_it   new_it = raise_freq(key_in_cache.second); 
+            key_it   new_it = std::move(raise_freq(key_in_cache.second)); 
                        page = new_it->page_;
-            hash_it->second = new_it;
+            hash_it->second = std::move(new_it);
         }
 
         else if (size < capacity_)
         {
-            key_it iter = add_to_cache(key);
+            key_it iter = std::move(add_to_cache(key));
             map_.insert({key, iter});
 
             page = iter->page_;
         }
         else
         {
-            key_it iter_to_change =           get_lfu();
+            key_it iter_to_change = std::move(get_lfu());
 
-            map_.erase           (iter_to_change->key_);
-            key_it iter = replace(iter_to_change, key );  
+            map_.erase                    (iter_to_change->key_ );
+            key_it iter = std::move(replace(iter_to_change, key )); 
 
             map_.emplace(key, iter);
-            page = iter->page_;   //change in 1st and mv to return
+            page = iter->page_;   
         }   
     
         return page;
     }
 
+
+///---------------------------------------------------------------------------------------------------
 
 
     void print()
@@ -110,10 +112,18 @@ class cache
         std::cout << std::endl;
     }
 
+
+///---------------------------------------------------------------------------------------------------
+
+
     std::size_t get_hit_num()
     {
         return hit_num_;
     }
+
+
+///---------------------------------------------------------------------------------------------------
+
 
     std::size_t get_data()
     {
@@ -131,7 +141,7 @@ class cache
 
     }
 
-
+///---------------------------------------------------------------------------------------------------
     private:
 ///---------------------------------------------------------------------------------------------------
 
@@ -148,8 +158,6 @@ class cache
 
         return {false, key_it{}};
     }
-
-
 ///---------------------------------------------------------------------------------------------------
 
 
@@ -163,12 +171,12 @@ class cache
         if (iter->root_ == std::prev(freq_list_.end()))
         {
             std::list<node_> list;
-            freq_list_.push_back({iter->root_->first + 1, list});
+            freq_list_.push_back({iter->root_->first + 1, list});  //here compiler doesnt like std::move
         }
 
-        freq_it new_root = ++(iter->root_); 
+        freq_it new_root = std::move(++(iter->root_)); 
         new_root->second.push_front({key, page, new_root});  //
-                                                                // mat be better
+                                                                // may be better
                                                                 // replace with
                                                                 // each other
         iter->root_->second.erase(iter);                     //
@@ -176,6 +184,7 @@ class cache
         return new_root->second.begin();
     }
 
+///---------------------------------------------------------------------------------------------------
 
 
     key_it add_to_cache(const key_T& key)
@@ -192,6 +201,9 @@ class cache
         return freq_list_.begin()->second.begin();
     }
 
+///---------------------------------------------------------------------------------------------------
+
+
     key_it get_lfu()
     {
         for (auto [freq, list] : freq_list_) 
@@ -203,11 +215,14 @@ class cache
         return key_it{};   //for the further repairations
     }
 
+///---------------------------------------------------------------------------------------------------
+
     page_T get_page(const key_T& key)
     {
         return key;
     }
 
+///---------------------------------------------------------------------------------------------------
 
     key_it replace(key_it iter, key_T new_key) // in case of freq = 1 its possible just to replace data but not to erase the whole element
     {
@@ -218,6 +233,7 @@ class cache
         return new_it;                                             
     }
 
+///---------------------------------------------------------------------------------------------------
 
 
 
