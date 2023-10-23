@@ -63,24 +63,24 @@ class cache
 
         if(key_in_cache.first)
         {
-            key_it   new_it = std::move(raise_freq(key_in_cache.second)); 
+            key_it   new_it = raise_freq(key_in_cache.second); 
                        page = new_it->page_;
-            hash_it->second = std::move(new_it);
+            hash_it->second = new_it;
         }
 
         else if (size < capacity_)
         {
-            key_it iter = std::move(add_to_cache(key));
+            key_it iter = add_to_cache(key);
             map_.insert({key, iter});
 
             page = iter->page_;
         }
         else
         {
-            key_it iter_to_change = std::move(get_lfu());
+            key_it iter_to_change = get_lfu();
 
-            map_.erase                    (iter_to_change->key_ );
-            key_it iter = std::move(replace(iter_to_change, key )); 
+            map_.erase           (iter_to_change->key_);
+            key_it iter = replace(iter_to_change, key ); 
 
             map_.emplace(key, iter);
             page = iter->page_;   
@@ -160,26 +160,17 @@ class cache
     }
 ///---------------------------------------------------------------------------------------------------
 
-
-                                    // or a link to iterator
     key_it raise_freq(key_it iter)   
     {
-        key_T   key = std::move(iter-> key_);
-        page_T page = std::move(iter->page_);
-        
-        
         if (iter->root_ == std::prev(freq_list_.end()))
         {
             std::list<node_> list;
-            freq_list_.push_back({iter->root_->first + 1, list});  //here compiler doesnt like std::move
+            freq_list_.push_back({iter->root_->first + 1, list}); 
         }
 
-        freq_it new_root = std::move(++(iter->root_)); 
-        new_root->second.push_front({key, page, new_root});  //
-                                                                // may be better
-                                                                // replace with
-                                                                // each other
-        iter->root_->second.erase(iter);                     //
+        freq_it new_root = ++(iter->root_); 
+        new_root->second.push_front({iter->key_, iter->page_, new_root});  
+        iter->root_->second.erase(iter);                     
         
         return new_root->second.begin();
     }
